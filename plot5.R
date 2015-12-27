@@ -7,8 +7,6 @@
 library(dplyr)
 library(ggplot2)
 
-setwd("D:/01.Personal/Coursera/01 Data Science/JHU/exdata proj 2")
-
 rm(list = ls())
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
