@@ -12,14 +12,9 @@ library(dplyr)
 library(ggplot2)
 library(gridExtra)
 
-setwd("D:/01.Personal/Coursera/01 Data Science/JHU/exdata proj 2")
-
 rm(list = ls())
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
-
-NEI <- tbl_df(NEI)
-SCC <- tbl_df(SCC)
 
 ## filter the emissions by "On-ROAD" and LA (fips = 06037) or Baltimore (fips = 24510)
 filted <- filter(NEI, type == "ON-ROAD", fips == "06037" | fips == "24510")
@@ -36,14 +31,11 @@ levels(data1$fips)[levels(data1$fips) == "24510"] <- "Baltimore"
 
 
 ## start the plot
-#g <- ggplot(filter(data1, fips == "24510"), aes(x = factor(year), y = Emissions))
-#g <- ggplot(data1, aes(x = factor(year), y = Emissions))
-#g + geom_bar(stat = "identity") + facet_grid(.~fips) + geom_smooth(method = "lm")
-#g + geom_point() + facet_wrap(fips~.) + geom_smooth(method = "lm", aes(group = 1))
 
+# grid.arrange has problem saving plot to png, use pdf instead
+pdf(file = "plot6new.pdf", width = 7, height = 10)
 
-pdf(file = "plot6.pdf", width = 7, height = 10)
-
+# extract city factor
 city <- split(data1, f = data1$fips)
 
 p1 <- ggplot(city$"Baltimore", aes(x = factor(year), y = Emissions)) +
@@ -56,10 +48,11 @@ p1 <- ggplot(city$"Baltimore", aes(x = factor(year), y = Emissions)) +
   labs(colour="Emissions") +
   theme(legend.position = "bottom") 
 
+# grid.arrange trick
 p2 <- p1 %+% city$"Los Angeles"
 
 grid.arrange(p1, p2)
 
-g <- arrangeGrob(grobs = c( p1, p2), nrow = 2)
+# g <- arrangeGrob(grobs = c( p1, p2), nrow = 2)
 
 dev.off()
